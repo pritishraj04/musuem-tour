@@ -1,0 +1,16 @@
+{
+  "name": "Bihar Museum Digital Guide",
+  "short_name": "Bihar Museum",
+  "description": "Explore Bihar Museum's world-class collection with an interactive digital tour guide.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "192x192 512x512",
+      "type": "image/x-icon"
+    }
+  ]
+}
