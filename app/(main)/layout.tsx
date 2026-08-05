@@ -13,7 +13,7 @@ export default function MainLayout({
       {/* Main content — scrollable area between header and nav */}
       <main
         className="flex-1 overflow-y-auto"
-        style={{ paddingBottom: "calc(60px + env(safe-area-inset-bottom, 0px))" }}
+        style={{ paddingBottom: "calc(90px + env(safe-area-inset-bottom, 0px))" }}
       >
         {children}
       </main>
