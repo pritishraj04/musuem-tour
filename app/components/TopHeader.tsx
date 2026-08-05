@@ -51,10 +51,20 @@ export default function TopHeader({
         )}
       </div>
 
-      {/* Center — title */}
-      <h1 className="relative z-10 text-base font-semibold tracking-tight text-foreground text-center">
-        {title}
-      </h1>
+      {/* Center — title / logo */}
+      <div className="relative z-10 flex flex-1 items-center justify-center">
+        {title === "Bihar Museum" ? (
+          <img 
+            src="/BiharMuseum.svg" 
+            alt="Bihar Museum Logo" 
+            className="h-12 w-auto object-contain invert opacity-90"
+          />
+        ) : (
+          <h1 className="text-base font-semibold tracking-tight text-foreground text-center">
+            {title}
+          </h1>
+        )}
+      </div>
 
       {/* Right slot — action or spacer */}
       <div className="relative flex w-10 items-center justify-end z-10">
