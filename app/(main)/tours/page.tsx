@@ -68,12 +68,22 @@ const itemVariants = {
   show: { y: 0, opacity: 1, transition: { type: "spring" as const, stiffness: 120 } }
 };
 
-export default function AudioToursPage() {
-  const [activeTour, setActiveTour] = useState<string | null>("masterpiece-trail");
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioProgress, setAudioProgress] = useState(35);
+import { useAudio } from "@/context/AudioContext";
 
-  const currentTourData = tours.find((t) => t.id === activeTour);
+export default function AudioToursPage() {
+  const { playTrack, currentTrack, isPlaying } = useAudio();
+
+  const handleStartTour = (tour: typeof tours[0]) => {
+    playTrack({
+      id: tour.id,
+      title: tour.title,
+      subtitle: `${tour.duration} · ${tour.narrator}`,
+      duration: tour.duration,
+      durationSeconds: parseInt(tour.duration) * 60 || 1800,
+      href: "/tours",
+      image: tour.image,
+    });
+  };
 
   return (
     <motion.div
@@ -127,14 +137,11 @@ export default function AudioToursPage() {
                   Narrated by {tour.narrator}
                 </span>
                 <Button
-                  onClick={() => {
-                    setActiveTour(tour.id);
-                    setIsPlaying(true);
-                  }}
+                  onClick={() => handleStartTour(tour)}
                   className="btn-primary h-11 px-5 rounded-xl text-sm font-semibold border-2 border-border bg-primary text-primary-foreground"
                 >
-                  {activeTour === tour.id && isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2 fill-current" />}
-                  {activeTour === tour.id && isPlaying ? "Pause Audio" : "Start Tour"}
+                  {currentTrack?.id === tour.id && isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2 fill-current" />}
+                  {currentTrack?.id === tour.id && isPlaying ? "Pause Audio" : "Start Tour"}
                 </Button>
               </div>
             </CardContent>
@@ -154,7 +161,7 @@ export default function AudioToursPage() {
               key={tour.id} 
               className={cn(
                 "bg-card border-2 border-border rounded-[28px] overflow-hidden shadow-none transition-colors",
-                activeTour === tour.id && "ring-2 ring-primary"
+                currentTrack?.id === tour.id && "ring-2 ring-primary"
               )}
             >
               <CardContent className="p-4 flex gap-4 items-center">
@@ -163,13 +170,10 @@ export default function AudioToursPage() {
                   style={{ backgroundImage: `url('${tour.image}')` }}
                 >
                   <button 
-                    onClick={() => {
-                      setActiveTour(tour.id);
-                      setIsPlaying(activeTour === tour.id ? !isPlaying : true);
-                    }}
+                    onClick={() => handleStartTour(tour)}
                     className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/60 transition-colors text-white"
                   >
-                    {activeTour === tour.id && isPlaying ? (
+                    {currentTrack?.id === tour.id && isPlaying ? (
                       <Pause className="w-6 h-6 fill-current" />
                     ) : (
                       <Play className="w-6 h-6 fill-current ml-0.5" />
@@ -195,47 +199,6 @@ export default function AudioToursPage() {
           ))}
         </div>
       </motion.div>
-
-      {/* ── Active Audio Player Dock ── */}
-      <AnimatePresence>
-        {activeTour && currentTourData && (
-          <motion.div
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            className="fixed bottom-[90px] left-6 right-6 z-40"
-          >
-            <Card className="bg-[#1a1a1a] text-[#ffffeb] border-2 border-[#1a1a1a] rounded-[28px] p-4 shadow-xl">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-[#f0d7ff] text-[#1a1a1a] border-2 border-[#1a1a1a] flex items-center justify-center font-bold text-xs shrink-0">
-                  <Headphones className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold uppercase text-[#f0d7ff] tracking-wider">Now Playing</p>
-                  <p className="text-sm font-semibold text-[#ffffeb] truncate">{currentTourData.title}</p>
-                </div>
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="w-10 h-10 rounded-full bg-[#f0d7ff] text-[#1a1a1a] border-2 border-[#1a1a1a] flex items-center justify-center shrink-0"
-                >
-                  {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
-                </button>
-              </div>
-
-              {/* Progress track */}
-              <div className="space-y-1">
-                <div className="h-2 w-full bg-[#e4e4d0]/20 rounded-full overflow-hidden border border-[#ffffeb]/30">
-                  <div className="h-full bg-[#f0d7ff] rounded-full" style={{ width: `${audioProgress}%` }} />
-                </div>
-                <div className="flex justify-between text-[10px] font-mono text-[#e4e4d0]">
-                  <span>14:20</span>
-                  <span>{currentTourData.duration}</span>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

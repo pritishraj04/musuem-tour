@@ -7,7 +7,7 @@
 
 @theme inline {
   /* Colors */
-  --color-lavender-whisper: #f0d7ff;
+  --color-pastel-golden: #f3e3b3;
   --color-forest-ink: #034f46;
   --color-ember-glow: #ffa946;
   --color-vast-ink: #1a1a1a;
@@ -41,7 +41,7 @@
   --foreground: #1a1a1a;
   --card: #ffffeb;
   --card-foreground: #1a1a1a;
-  --primary: #f0d7ff;
+  --primary: #f3e3b3;
   --primary-foreground: #1a1a1a;
   --secondary: #034f46;
   --secondary-foreground: #ffffeb;
@@ -56,7 +56,7 @@
   --foreground: #ffffeb;
   --card: #242424;
   --card-foreground: #ffffeb;
-  --primary: #f0d7ff;
+  --primary: #f3e3b3;
   --primary-foreground: #1a1a1a;
   --secondary: #034f46;
   --secondary-foreground: #ffffeb;
@@ -91,7 +91,7 @@
     align-items: center;
     justify-content: center;
     padding: 14px 22px;
-    background-color: #f0d7ff;
+    background-color: #f3e3b3;
     color: #1a1a1a;
     border: 2px solid var(--border);
     border-radius: 12px;
@@ -105,7 +105,7 @@
   }
   .btn-primary:hover {
     transform: translateY(-1px);
-    background-color: #e5c4fa;
+    background-color: #ebd79c;
   }
   .btn-primary:active {
     transform: scale(0.98);

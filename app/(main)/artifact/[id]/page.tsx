@@ -8,6 +8,7 @@ import { MapPin, Headphones, Box, Tag, ShieldCheck, ChevronRight, Quote, Play, P
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAudio } from "@/context/AudioContext";
 
 interface ArtifactData {
   title: string;
@@ -81,6 +82,48 @@ const artifactDatabase: Record<string, ArtifactData> = {
     floor: "Floor 1, North Corridor",
     tags: ["Terracotta", "Mother Goddess", "Village Folk Craft", "Gangetic Plain"],
   },
+  "bulandibagh-dancer": {
+    title: "Bulandibagh Dancing Girl",
+    subtitle: "c. 3rd Century BCE • Excavated Pataliputra Terracotta",
+    era: "Mauryan Period",
+    material: "Fired Gangetic Clay",
+    image: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&q=80",
+    audioDuration: "3:05",
+    highlightBadge: "Urban Fashion · Level 2",
+    quote: "Capturing the fluid movement and elaborate layered skirts of Pataliputra court dancers.",
+    description: "Unearthed at Bulandibagh near Patna, this remarkable figurine features a wide hoop skirt and hoop earrings. It offers invaluable historical evidence of performance arts in the ancient Mauryan capital.",
+    gallery: "Pataliputra Excavation Gallery",
+    floor: "Floor 1, East Wing",
+    tags: ["Pataliputra", "Terracotta", "Performing Arts", "Mauryan Era"],
+  },
+  "sher-shah-coins": {
+    title: "Rupiya of Sher Shah Suri",
+    subtitle: "c. 1540 CE • Standardized High-Purity Silver Coin",
+    era: "Sur Empire",
+    material: "Pure Silver (178 grains)",
+    image: "https://images.unsplash.com/photo-1618844876615-5c1cbcf3452f?w=800&q=80",
+    audioDuration: "2:40",
+    highlightBadge: "Numismatic Treasure · Level 3",
+    quote: "The historic silver coin that established the standard 'Rupee' currency system across South Asia.",
+    description: "Issued during the reign of Emperor Sher Shah Suri from Sasaram, Bihar, this heavy silver coin bears Arabic and Devanagari inscriptions. Its precise weight standard formed the foundation of modern South Asian coinage.",
+    gallery: "Coins & Currency Gallery",
+    floor: "Floor 2, Numismatic Pavilion",
+    tags: ["Sher Shah Suri", "Currency", "Silver Coin", "Medieval History"],
+  },
+  "patna-school-painting": {
+    title: "Patna Kalam Bazaar Painting",
+    subtitle: "c. 18th Century CE • Watercolors on Handmade Paper",
+    era: "Patna School of Painting",
+    material: "Natural Pigments on Mulberry Paper",
+    image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=800&q=80",
+    audioDuration: "4:00",
+    highlightBadge: "Miniature Painting · Level 2",
+    quote: "Synthesizing Mughal precision with European realism to document everyday tradesmen and festive life of Patna.",
+    description: "Patna Kalam was a distinct style of Indian painting that flourished in Bihar during the 18th and 19th centuries. Painted directly with fine squirrel-hair brushes without preliminary pencil sketches, these artworks capture carpet weavers, blacksmiths, and Gangetic boatmen with vivid realism.",
+    gallery: "Regional Art & Miniatures",
+    floor: "Floor 2, South Wing",
+    tags: ["Patna Kalam", "Miniature Painting", "Mughal Synthesis", "Folk Trades"],
+  },
 };
 
 const containerVariants = {
@@ -101,9 +144,22 @@ export default function ArtifactPage({ params }: { params: Promise<{ id: string 
   const artifactId = resolvedParams?.id || "didarganj-yakshi";
   const artifact = artifactDatabase[artifactId] || artifactDatabase["didarganj-yakshi"];
 
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [show3D, setShow3D] = useState(false);
+  const [is3DMode, setIs3DMode] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const { playTrack, currentTrack, isPlaying } = useAudio();
+  const isPlayingAudio = isPlaying && currentTrack?.id === artifactId;
+
+  const handlePlayArtifactAudio = () => {
+    playTrack({
+      id: artifactId,
+      title: `${artifact.title} Audio Guide`,
+      subtitle: artifact.subtitle,
+      duration: artifact.audioDuration,
+      durationSeconds: 225,
+      href: `/artifact/${artifactId}`,
+      image: artifact.image,
+    });
+  };
 
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
@@ -163,7 +219,7 @@ export default function ArtifactPage({ params }: { params: Promise<{ id: string 
         {/* Action Buttons */}
         <motion.div variants={itemVariants} className="flex gap-3 mb-8 w-full">
           <Button 
-            onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+            onClick={handlePlayArtifactAudio}
             className={cn(
               "btn-primary flex-[3] h-14 rounded-xl text-base font-semibold border-2 border-border transition-colors",
               isPlayingAudio ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground"
@@ -173,32 +229,16 @@ export default function ArtifactPage({ params }: { params: Promise<{ id: string 
             {isPlayingAudio ? "Pause Audio" : `Listen (${artifact.audioDuration})`}
           </Button>
           <Button 
-            onClick={() => setShow3D(!show3D)}
+            onClick={() => setIs3DMode(!is3DMode)}
             className="btn-secondary flex-[2] h-14 rounded-xl text-base font-semibold border-2 border-border bg-card text-foreground"
           >
             <Box className="w-4 h-4 mr-2" />
-            {show3D ? "Photo" : "3D Model"}
+            {is3DMode ? "Photo" : "3D Model"}
           </Button>
         </motion.div>
 
-        {/* Audio Player Active Card */}
-        {isPlayingAudio && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-6">
-            <Card className="bg-[#1a1a1a] text-[#ffffeb] border-2 border-[#1a1a1a] rounded-[24px] p-4 shadow-none">
-              <div className="flex items-center justify-between mb-2 text-xs font-semibold text-[#f0d7ff]">
-                <span>Now Playing: {artifact.title} Audio Guide</span>
-                <span>{artifact.audioDuration}</span>
-              </div>
-              <div className="h-2 w-full bg-[#ffffeb]/20 rounded-full overflow-hidden mb-2">
-                <div className="h-full bg-[#f0d7ff] w-1/3 rounded-full animate-pulse" />
-              </div>
-              <p className="text-[11px] text-[#e4e4d0]">Narrated by Bihar Museum Senior Curator</p>
-            </Card>
-          </motion.div>
-        )}
-
         {/* 3D Model Render Frame */}
-        {show3D && (
+        {is3DMode && (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-8">
             <Card className="bg-card border-2 border-border rounded-[32px] p-6 text-center shadow-none">
               <div className="w-16 h-16 rounded-full bg-primary/20 border-2 border-border flex items-center justify-center mx-auto mb-3">

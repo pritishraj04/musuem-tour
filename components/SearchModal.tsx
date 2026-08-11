@@ -55,6 +55,33 @@ const searchDatabase: SearchItem[] = [
     badge: "Folk Craft",
   },
   {
+    id: "bulandibagh-dancer",
+    title: "Bulandibagh Dancing Girl",
+    subtitle: "3rd Century BCE Pataliputra Terracotta",
+    category: "Artifact",
+    href: "/artifact/bulandibagh-dancer",
+    image: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=400&q=80",
+    badge: "Pataliputra",
+  },
+  {
+    id: "sher-shah-coins",
+    title: "Silver Rupee of Sher Shah Suri",
+    subtitle: "c. 1540 CE High-Purity Medieval Currency",
+    category: "Artifact",
+    href: "/artifact/sher-shah-coins",
+    image: "https://images.unsplash.com/photo-1618844876615-5c1cbcf3452f?w=400&q=80",
+    badge: "Numismatics",
+  },
+  {
+    id: "patna-school-painting",
+    title: "Patna Kalam Miniature Painting",
+    subtitle: "18th Century Silk & Paper Watercolor",
+    category: "Artifact",
+    href: "/artifact/patna-school-painting",
+    image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=400&q=80",
+    badge: "Miniatures",
+  },
+  {
     id: "gallery-a",
     title: "History Gallery A",
     subtitle: "Pre-History to Mauryan Empire (Floor 1, East Wing)",
@@ -234,7 +261,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                         <div className="flex items-center gap-3.5 min-w-0">
                           <div className={cn(
                             "w-11 h-11 rounded-2xl border-2 border-border flex items-center justify-center shrink-0",
-                            item.category === "Artifact" ? "bg-primary text-primary-foreground" : item.category === "Gallery" ? "bg-secondary text-secondary-foreground" : item.category === "Audio Tour" ? "bg-[#f0d7ff] text-[#1a1a1a]" : "bg-muted text-foreground"
+                            item.category === "Artifact" ? "bg-primary text-primary-foreground" : item.category === "Gallery" ? "bg-secondary text-secondary-foreground" : item.category === "Audio Tour" ? "bg-[#f3e3b3] text-[#1a1a1a]" : "bg-muted text-foreground"
                           )}>
                             {item.category === "Artifact" && <Landmark className="w-5 h-5" />}
                             {item.category === "Gallery" && <MapPin className="w-5 h-5" />}
