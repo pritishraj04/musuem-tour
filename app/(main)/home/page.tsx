@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { 
@@ -16,7 +17,9 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Gauge } from "@/components/ui/Gauge";
 import { cn } from "@/lib/utils";
+import { SearchModal } from "@/components/SearchModal";
 
 // Mock Data
 const upcomingEvents = [
@@ -74,109 +77,134 @@ const itemVariants = {
 };
 
 export default function HomePage() {
-  return (
-    <motion.div 
-      className="flex flex-col min-h-full pt-24 pb-12 overflow-x-hidden"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-    >
-      {/* ── Hero headline ── */}
-      <motion.section variants={itemVariants} className="px-6 pt-8 pb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Bihar Museum
-        </h1>
-        <p className="mt-1 text-base text-muted-foreground font-medium">
-          Welcome back, Guest Explorer
-        </p>
-      </motion.section>
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-      {/* ── Search bar ── */}
-      <motion.div variants={itemVariants} className="px-6 pb-8">
-        <div className="flex items-center gap-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-5 py-4 shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <span className="text-sm text-muted-foreground font-medium">
-            Search Exhibits or Galleries...
-          </span>
-        </div>
+  return (
+    <>
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
+      <motion.div 
+        className="flex flex-col min-h-full pt-20 pb-16 overflow-x-hidden bg-[#ffffeb] text-[#1a1a1a]"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
+        {/* ── Hero headline ── */}
+        <motion.section variants={itemVariants} className="px-6 pt-6 pb-6">
+          <div className="badge-teal mb-3">
+            <span className="w-2 h-2 rounded-full bg-[#ffa946] animate-pulse" />
+            Museum Exploration Mode
+          </div>
+          <h1 className="font-[family-name:var(--font-eb-garamond)] font-normal text-5xl tracking-tight leading-[0.95] text-[#1a1a1a]">
+            Bihar Museum
+          </h1>
+          <p className="mt-2 text-lg text-[#8a8a80] font-normal">
+            Welcome, Guest Explorer
+          </p>
+        </motion.section>
+
+        {/* ── Search bar ── */}
+        <motion.div variants={itemVariants} className="px-6 pb-4">
+          <button 
+            onClick={() => setIsSearchOpen(true)}
+            className="w-full flex items-center gap-3 bg-[#ffffeb] hover:bg-[#e4e4d0]/60 border-2 border-[#1a1a1a] rounded-full px-5 py-3.5 shadow-none transition-colors text-left"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <span className="text-sm text-[#8a8a80] font-medium font-[family-name:var(--font-figtree)]">
+              Search Didarganj Yakshi, Bronzes, or History...
+            </span>
+          </button>
+        </motion.div>
+
+      {/* ── Official Museum Timings & Ticket Info Chip ── */}
+      <motion.div variants={itemVariants} className="px-6 pb-6">
+        <Link href="/about" className="block outline-none">
+          <div className="flex items-center justify-between bg-[#e4e4d0]/60 hover:bg-[#e4e4d0] border-2 border-[#1a1a1a] rounded-2xl px-4 py-2.5 transition-colors">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#1a1a1a]">
+              <span className="w-2 h-2 rounded-full bg-[#034f46]" />
+              <span>Open Today · 10:00 AM – 5:00 PM</span>
+            </div>
+            <span className="text-[11px] font-bold text-[#034f46] hover:underline">
+              Tickets ₹100 / ₹500 →
+            </span>
+          </div>
+        </Link>
       </motion.div>
 
-      {/* ── Scanner CTA ── */}
+      {/* ── Scanner CTA (Dark Chamber #1a1a1a) ── */}
       <motion.div variants={itemVariants} className="px-6 pb-8">
         <Link href="/scan" className="block outline-none">
-          <Card className="relative overflow-hidden bg-black border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] group rounded-3xl">
+          <Card className="relative overflow-hidden bg-[#1a1a1a] text-[#ffffeb] border-2 border-[#1a1a1a] rounded-[40px] shadow-none group">
             {/* Background Image Layer */}
             <div 
-              className="absolute inset-0 opacity-40 group-hover:opacity-50 transition-opacity duration-500 bg-cover bg-center"
+              className="absolute inset-0 opacity-25 group-hover:opacity-35 transition-opacity duration-500 bg-cover bg-center mix-blend-luminosity"
               style={{ backgroundImage: "url('/museum-sculpture-bg.png')" }}
             />
-            {/* Radial Gradient overlay to ensure text readability */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(0,0,0,0.1)_0%,_rgba(0,0,0,0.9)_100%)]" />
             
-            <CardContent className="flex flex-col items-center text-center p-8 relative z-10">
+            <CardContent className="flex flex-col items-center text-center p-7 relative z-10">
               <motion.div 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center justify-center relative w-20 h-20 rounded-full bg-gradient-to-br from-[#dcc27c] to-[#a68b4b] shadow-[0_0_32px_rgba(220,194,124,0.4)] mb-5"
+                className="flex items-center justify-center relative w-16 h-16 rounded-full bg-[#f0d7ff] text-[#1a1a1a] border-2 border-[#1a1a1a] mb-4"
               >
-                <ScanLine className="h-8 w-8 text-black" strokeWidth={2.5} />
+                <ScanLine className="h-7 w-7 text-[#1a1a1a]" strokeWidth={2.5} />
               </motion.div>
               
-              <h2 className="text-2xl font-extrabold text-white tracking-tight drop-shadow-md">
-                Tap to Recognize
+              <h2 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-[#ffffeb] tracking-tight">
+                Scan Artifact
               </h2>
-              <p className="mt-2 text-sm text-white/80 max-w-[240px] font-medium leading-relaxed drop-shadow-sm">
-                Point camera at any artifact to learn more and <span className="text-primary font-bold">earn 100 XP</span>
+              <p className="mt-2 text-sm text-[#e4e4d0] max-w-[250px] font-normal leading-snug">
+                Point your lens at any gallery exhibit to unlock history & <span className="font-semibold text-[#f0d7ff] underline decoration-2">earn 100 XP</span>
               </p>
             </CardContent>
           </Card>
         </Link>
       </motion.div>
 
-      {/* ── Compact Action Chips ── */}
-      <motion.div variants={itemVariants} className="px-6 pb-10">
+      {/* ── Action Chips ── */}
+      <motion.div variants={itemVariants} className="px-6 pb-8">
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 -mx-6 px-6">
           {actionChips.map((chip) => (
             <Link key={chip.label} href={chip.href} className="outline-none shrink-0">
               <motion.div 
                 whileHover={{ scale: 0.97 }} 
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 rounded-full px-5 py-3 transition-colors shadow-sm"
+                className="flex items-center gap-2 bg-[#ffffeb] hover:bg-[#e4e4d0] border-2 border-[#1a1a1a] rounded-full px-4 py-2.5 transition-colors"
               >
-                <chip.icon className="h-4 w-4 text-primary" strokeWidth={2.5} />
-                <span className="text-[13px] font-semibold text-foreground tracking-wide">{chip.label}</span>
+                <chip.icon className="h-4 w-4 text-[#1a1a1a]" strokeWidth={2} />
+                <span className="text-[13px] font-medium text-[#1a1a1a] tracking-wide">{chip.label}</span>
               </motion.div>
             </Link>
           ))}
         </div>
       </motion.div>
 
-      {/* ── Curator's Picks ── */}
-      <motion.section variants={itemVariants} className="px-6 pb-10">
-        <div className="flex items-center justify-between mb-5">
+      {/* ── Curator's Picks (Cream Card #ffffeb) ── */}
+      <motion.section variants={itemVariants} className="px-6 pb-8">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-bold text-foreground">Curator's Pick</h3>
+            <Sparkles className="h-5 w-5 text-[#034f46]" />
+            <h3 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-[#1a1a1a]">Curator&apos;s Choice</h3>
           </div>
         </div>
         
-        <Link href={`/artifact/${curatorPick.id}`} className="block outline-none group">
-          <Card className="relative overflow-hidden bg-background/20 backdrop-blur-xl border-border/50 shadow-sm rounded-3xl h-[240px]">
+        <Link href="/artifact/didarganj-yakshi" className="block outline-none group">
+          <Card className="relative overflow-hidden bg-[#ffffeb] border-2 border-[#1a1a1a] rounded-[32px] h-[250px] shadow-none">
             <div 
-              className="absolute inset-0 bg-cover bg-center opacity-60 group-hover:scale-105 transition-transform duration-700"
+              className="absolute inset-0 bg-cover bg-center opacity-70 group-hover:scale-105 transition-transform duration-700"
               style={{ backgroundImage: `url('${curatorPick.image}')` }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-[#1a1a1a]/50 to-transparent" />
             
             <CardContent className="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col justify-end">
-              <span className="text-[10px] font-bold tracking-widest text-primary uppercase mb-1 drop-shadow-md">
+              <div className="badge-teal w-fit mb-2">
                 Featured Exhibit
-              </span>
-              <h4 className="text-xl font-bold text-white mb-2 drop-shadow-md">{curatorPick.title}</h4>
-              <p className="text-[13px] text-white/80 line-clamp-2 drop-shadow-sm font-medium">
+              </div>
+              <h4 className="font-[family-name:var(--font-eb-garamond)] text-2xl font-normal text-[#ffffeb] mb-1">{curatorPick.title}</h4>
+              <p className="text-xs text-[#e4e4d0] line-clamp-2 font-normal leading-relaxed">
                 {curatorPick.description}
               </p>
             </CardContent>
@@ -185,77 +213,82 @@ export default function HomePage() {
       </motion.section>
 
       {/* ── Events Carousel ── */}
-      <motion.section variants={itemVariants} className="pb-10">
-        <div className="flex items-center justify-between px-6 mb-5">
-          <h3 className="text-lg font-bold text-foreground">Upcoming Events</h3>
-          <Link href="/events" className="text-xs font-semibold text-primary flex items-center hover:underline">
+      <motion.section variants={itemVariants} className="pb-8">
+        <div className="flex items-center justify-between px-6 mb-4">
+          <h3 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-[#1a1a1a]">Upcoming Events</h3>
+          <Link href="/events" className="text-xs font-semibold text-[#1a1a1a] flex items-center hover:underline">
             View All <ChevronRight className="h-3 w-3 ml-0.5" />
           </Link>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto hide-scrollbar pl-6 pr-6 pb-4">
+        <div className="flex gap-4 overflow-x-auto hide-scrollbar pl-6 pr-6 pb-2">
           {upcomingEvents.map((event) => (
-            <Card key={event.id} className="shrink-0 w-[240px] bg-white/5 backdrop-blur-lg border-border/50 shadow-sm overflow-hidden rounded-2xl group hover:bg-white/10 transition-colors">
-              <div 
-                className="h-[140px] bg-cover bg-center relative"
-                style={{ backgroundImage: `url('${event.image}')` }}
-              >
-                <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md">
-                  <span className="text-[9px] font-bold uppercase text-white tracking-wider">{event.tag}</span>
+            <Link key={event.id} href="/events" className="block shrink-0 outline-none">
+              <Card className="w-[240px] bg-[#ffffeb] border-2 border-[#1a1a1a] shadow-none overflow-hidden rounded-[24px] group hover:bg-[#e4e4d0] transition-colors">
+                <div 
+                  className="h-[130px] bg-cover bg-center relative border-b-2 border-[#1a1a1a]"
+                  style={{ backgroundImage: `url('${event.image}')` }}
+                >
+                  <div className="absolute top-2 left-2 bg-[#1a1a1a] text-[#ffffeb] px-2.5 py-1 rounded-full border border-[#ffffeb]">
+                    <span className="text-[10px] font-medium tracking-wider">{event.tag}</span>
+                  </div>
                 </div>
-              </div>
-              <CardContent className="p-4">
-                <h4 className="text-sm font-bold text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                  {event.title}
-                </h4>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span className="text-xs font-medium">{event.date}</span>
-                </div>
-              </CardContent>
-            </Card>
+                <CardContent className="p-4">
+                  <h4 className="text-sm font-semibold text-[#1a1a1a] mb-1.5 line-clamp-1">
+                    {event.title}
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-[#8a8a80]">
+                    <Clock className="h-3.5 w-3.5 text-[#1a1a1a]" />
+                    <span className="text-xs font-medium text-[#1a1a1a]">{event.date}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </motion.section>
 
       {/* ── My Local Passport card ── */}
-      <motion.div variants={itemVariants} className="px-6 pb-12">
+      <motion.div variants={itemVariants} className="px-6 pb-8">
         <Link href="/passport" className="block outline-none">
           <motion.div whileHover={{ scale: 0.99 }} whileTap={{ scale: 0.98 }}>
-            <Card className="bg-background/40 backdrop-blur-xl border-border/50 shadow-[0_8px_24px_rgba(0,0,0,0.2)] relative overflow-hidden group rounded-3xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              
-              <CardContent className="p-6 relative z-10">
-                <div className="flex items-center justify-between mb-5">
+            <Card className="bg-[#ffffeb] border-2 border-[#1a1a1a] rounded-[32px] shadow-none p-6 relative overflow-hidden group">
+              <CardContent className="p-0">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-xl">
-                      <ShieldCheck className="h-5 w-5 text-primary" />
+                    <div className="p-2 bg-[#f0d7ff] border-2 border-[#1a1a1a] rounded-xl">
+                      <ShieldCheck className="h-5 w-5 text-[#1a1a1a]" />
                     </div>
-                    <span className="text-base font-bold text-foreground tracking-tight">
-                      My Local Passport
+                    <span className="font-[family-name:var(--font-eb-garamond)] text-2xl font-normal text-[#1a1a1a]">
+                      Local Passport
                     </span>
                   </div>
-                  <span className="text-[10px] font-bold tracking-wider px-2 py-1 bg-white/10 rounded-full text-muted-foreground">
+                  <span className="text-[10px] font-bold tracking-wider px-2.5 py-1 bg-[#1a1a1a] text-[#ffffeb] rounded-full">
                     OFFLINE
                   </span>
                 </div>
 
-                <div className="mb-2 flex justify-between items-end">
-                  <span className="text-xs font-bold tracking-widest text-primary uppercase">
-                    Level 1
-                  </span>
-                  <span className="text-xs font-bold text-foreground">
-                    150 / 500 XP
-                  </span>
-                </div>
-
-                <Progress value={30} className="h-2 w-full bg-white/10" />
+                {/* Linear Notched Gauge */}
+                <Gauge
+                  orientation="linear"
+                  value={30}
+                  centerValue="150 / 500 XP"
+                  defaultLabel="Level 1 Novice"
+                  totalNotches={20}
+                  spacing={20}
+                  linearHeight={14}
+                  notchCornerRadius={2}
+                  activeFill="var(--primary)"
+                  inactiveFill="var(--border)"
+                  activeFillOpacity={1}
+                  inactiveFillOpacity={0.3}
+                />
 
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    3 LABELS EARNED · <strong className="text-foreground font-semibold">Novice</strong>
+                  <span className="text-xs font-medium text-[#8a8a80]">
+                    3 LABELS EARNED · <strong className="text-[#1a1a1a] font-semibold">Novice</strong>
                   </span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors transform group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 text-[#1a1a1a] transform group-hover:translate-x-1 transition-transform" />
                 </div>
               </CardContent>
             </Card>
@@ -263,5 +296,6 @@ export default function HomePage() {
         </Link>
       </motion.div>
     </motion.div>
+    </>
   );
 }

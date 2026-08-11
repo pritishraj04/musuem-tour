@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, Zap, ZapOff, SlidersHorizontal, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SearchModal } from "@/components/SearchModal";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ScanPage() {
   const [isDetected, setIsDetected] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [flashOn, setFlashOn] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Simulate object detection sequence
   useEffect(() => {
@@ -216,21 +218,21 @@ export default function ScanPage() {
             />
           </svg>
 
-          {/* Actual Button */}
+          {/* Actual Shutter Button */}
           <Link href="/scan/result" className="outline-none z-10">
             <motion.div 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className={cn(
-                "flex items-center justify-center w-[72px] h-[72px] rounded-full transition-all duration-300",
+                "flex items-center justify-center w-[72px] h-[72px] rounded-full transition-all duration-300 border-2 border-[#1a1a1a]",
                 isDetected 
-                  ? "bg-white/10 backdrop-blur-md shadow-[0_0_32px_rgba(220,194,124,0.3)]" 
-                  : "bg-white/20 backdrop-blur-md hover:bg-white/30"
+                  ? "bg-[#f0d7ff]" 
+                  : "bg-[#ffffeb]"
               )}
             >
               <div className={cn(
-                "w-14 h-14 rounded-full transition-colors duration-500",
-                isDetected ? "bg-primary" : "bg-white"
+                "w-12 h-12 rounded-full border-2 border-[#1a1a1a] transition-colors duration-500",
+                isDetected ? "bg-[#034f46]" : "bg-[#f0d7ff]"
               )} />
             </motion.div>
           </Link>
@@ -238,13 +240,16 @@ export default function ScanPage() {
 
         {/* Manual search fallback */}
         <Button 
+          onClick={() => setIsSearchOpen(true)}
           variant="outline" 
-          className="rounded-full bg-white/5 backdrop-blur-xl border-white/10 text-white/80 hover:bg-white/10 hover:text-white font-medium"
+          className="rounded-full bg-[#ffffeb] border-2 border-[#1a1a1a] text-[#1a1a1a] hover:bg-[#e4e4d0] font-semibold h-11 px-5 z-20"
         >
-          <Search className="w-4 h-4 mr-2 opacity-70" />
+          <Search className="w-4 h-4 mr-2" />
           Search Manually
         </Button>
       </motion.div>
+
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 }

@@ -29,11 +29,8 @@ export default function TopHeader({
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="fixed top-0 left-1/2 -translate-x-1/2 z-40 flex h-16 w-full max-w-md items-center justify-between px-6"
+      className="fixed top-0 left-1/2 -translate-x-1/2 z-40 flex h-16 w-full max-w-md items-center justify-between px-6 bg-background/90 backdrop-blur-md border-b-2 border-border transition-colors duration-300"
     >
-      {/* Blurred background panel */}
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-xl border-b border-border/50" />
-
       {/* Left slot — back button or spacer */}
       <div className="relative flex w-10 items-center justify-start z-10">
         {showBack && (
@@ -41,12 +38,12 @@ export default function TopHeader({
             type="button"
             onClick={() => router.back()}
             className={cn(
-              "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition-all",
-              "hover:bg-accent hover:text-accent-foreground active:scale-95"
+              "flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition-all border-2 border-border bg-card text-foreground",
+              "hover:bg-primary active:scale-95"
             )}
             aria-label="Go back"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5 stroke-[2.5]" />
           </button>
         )}
       </div>
@@ -57,10 +54,10 @@ export default function TopHeader({
           <img 
             src="/BiharMuseum.svg" 
             alt="Bihar Museum Logo" 
-            className="h-12 w-auto object-contain invert opacity-90"
+            className="h-10 w-auto object-contain dark:invert"
           />
         ) : (
-          <h1 className="text-base font-semibold tracking-tight text-foreground text-center">
+          <h1 className="text-xl font-normal font-[family-name:var(--font-eb-garamond)] tracking-tight text-foreground text-center">
             {title}
           </h1>
         )}

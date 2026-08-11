@@ -27,9 +27,9 @@ const itemVariants = {
 
 export default function SplashPage() {
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-background">
+    <div className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-[#ffffeb] text-[#1a1a1a]">
       
-      {/* ── Background Sculpture ── */}
+      {/* ── Background Sculpture & Vignette ── */}
       <motion.div
         initial={{ scale: 1.05, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -41,11 +41,11 @@ export default function SplashPage() {
           alt="Ancient sculpture from Bihar Museum collection"
           fill
           priority
-          className="object-cover object-top opacity-60"
+          className="object-cover object-top opacity-30 mix-blend-multiply"
           sizes="100vw"
         />
         {/* Soft Vignette Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#ffffeb] via-[#ffffeb]/60 to-transparent" />
       </motion.div>
 
       {/* ── Content Layer ── */}
@@ -53,50 +53,54 @@ export default function SplashPage() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex min-h-[100dvh] flex-1 flex-col px-6"
+        className="relative z-10 flex min-h-[100dvh] flex-1 flex-col px-6 py-8"
       >
-        {/* ── Logo ── */}
-        <motion.header variants={itemVariants} className="flex w-full justify-center pt-12 pb-4">
+        {/* ── Header Badge & Logo ── */}
+        <motion.header variants={itemVariants} className="flex flex-col w-full items-start pt-6 pb-4 gap-4">
+          <div className="badge-teal">
+            <span className="w-2 h-2 rounded-full bg-[#ffa946] animate-pulse" />
+            Digital Tour Guide
+          </div>
           <img 
             src="/BiharMuseum.svg" 
             alt="Bihar Museum Logo" 
-            className="h-28 w-auto object-contain invert drop-shadow-2xl" 
+            className="h-12 w-auto object-contain" 
           />
         </motion.header>
 
         <div className="flex-1" />
 
-        {/* ── Typography Block ── */}
-        <motion.section variants={itemVariants} className="max-w-md">
-          <h1 className="scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-7xl text-foreground">
-            Tour Guide
+        {/* ── Typography Block (Eb Garamond 400 Display) ── */}
+        <motion.section variants={itemVariants} className="max-w-md my-6">
+          <h1 className="font-[family-name:var(--font-eb-garamond)] font-normal text-6xl leading-[0.9] tracking-[-1.92px] text-[#1a1a1a]">
+            Discover Bihar&apos;s Masterpieces
           </h1>
-          <h2 className="mt-2 text-2xl font-light tracking-wide text-muted-foreground">
-            Bihar Museum
-          </h2>
+          <p className="mt-4 text-xl font-normal text-[#8a8a80] leading-snug font-[family-name:var(--font-figtree)]">
+            An editorial journey through Mauryan bronze, Didarganj Yakshi, and 2,500 years of living art.
+          </p>
         </motion.section>
 
-        {/* ── CTA Buttons ── */}
-        <motion.section variants={itemVariants} className="mt-10 flex w-full max-w-sm flex-col gap-4">
+        {/* ── CTA Buttons (Wispr Flow Signature) ── */}
+        <motion.section variants={itemVariants} className="mt-6 flex w-full flex-col gap-3.5">
           <Button 
             size="lg" 
-            className="w-full rounded-full bg-gradient-to-r from-[#dcc27c] to-[#a68b4b] text-black hover:opacity-90 hover:scale-[1.02] transition-all shadow-[0_0_20px_rgba(220,194,124,0.3)] h-14 text-base font-semibold"
+            className="btn-primary w-full h-14 text-base font-semibold shadow-none border-2 border-[#1a1a1a] rounded-xl bg-[#f0d7ff] text-[#1a1a1a] hover:bg-[#e5c4fa]"
           >
-            Download App
+            Download Guide App
           </Button>
 
           <Link 
             href="/home" 
-            className="inline-flex shrink-0 items-center justify-center whitespace-nowrap outline-none select-none w-full rounded-full bg-background/20 backdrop-blur-md border border-border/50 text-foreground hover:bg-background/40 hover:text-foreground h-14 text-base gap-2"
+            className="btn-secondary w-full h-14 text-base font-semibold border-2 border-[#1a1a1a] rounded-xl bg-[#ffffeb] text-[#1a1a1a] hover:bg-[#e4e4d0] gap-2"
           >
-            Stay on Web <ArrowRight className="h-4 w-4" />
+            Explore Web Guide <ArrowRight className="h-4 w-4" />
           </Link>
         </motion.section>
 
         {/* ── Footer ── */}
-        <motion.footer variants={itemVariants} className="mt-auto py-8">
-          <p className="mx-auto text-center max-w-[300px] text-[10px] leading-relaxed text-muted-foreground/60 font-medium">
-            UMBRA is an incubator for Bihar&apos;s creative future. Founded on the visionary ethos of Upendra Maharathi—synthesizing Mughal/Rajput heritage, Buddhist minimalism, and grassroots craftsmanship into a contemporary global design language.
+        <motion.footer variants={itemVariants} className="mt-8 pt-3 border-t-2 border-[#1a1a1a]">
+          <p className="mx-auto text-center max-w-[340px] text-xs font-semibold leading-[1.15] text-[#111111]">
+            Bihar Museum Official Digital Guide <span className="text-[#ffa946] font-bold">v1.2.0</span> • Department of Arts, Culture & Youth, Govt. of Bihar • Preserving 2,500 years of living history.
           </p>
         </motion.footer>
       </motion.div>
