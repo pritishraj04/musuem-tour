@@ -1,11 +1,130 @@
 "use client";
 
+import { use, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { MapPin, Headphones, Box, Tag, ShieldCheck, ChevronRight, Quote } from "lucide-react";
+import { MapPin, Headphones, Box, Tag, ShieldCheck, ChevronRight, Quote, Play, Pause, ArrowLeft, Share2, Heart } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useAudio } from "@/context/AudioContext";
+
+interface ArtifactData {
+  title: string;
+  subtitle: string;
+  era: string;
+  material: string;
+  image: string;
+  audioDuration: string;
+  highlightBadge: string;
+  quote: string;
+  description: string;
+  gallery: string;
+  floor: string;
+  tags: string[];
+}
+
+const artifactDatabase: Record<string, ArtifactData> = {
+  "didarganj-yakshi": {
+    title: "Didarganj Yakshi",
+    subtitle: "c. 3rd Century BCE • Polished Chunar Sandstone",
+    era: "Mauryan Empire",
+    material: "Chunar Sandstone",
+    image: "/sculpture-hero.png",
+    audioDuration: "3:45",
+    highlightBadge: "Masterpiece Highlight · Level 2",
+    quote: "Globally renowned for its glass-like mirror polish, capturing the idealized female form in ancient Indian aesthetics.",
+    description: "Unearthed in 1917 on the banks of the Ganges, this life-size statue represents a Chauri (fly-whisk) bearer. Notice the intricate details of her jewelry, the heavy folds of her drapery, and the sheer perfection of the stone surface—an incredible technological feat achieved over two millennia ago.",
+    gallery: "Historical Art Gallery",
+    floor: "Floor 1, East Wing",
+    tags: ["Mauryan Empire", "Sculpture", "Feminine Divine", "Ancient Techniques"],
+  },
+  "mauryan-pillar-capital": {
+    title: "Mauryan Lion Capital",
+    subtitle: "c. 250 BCE • Sandstone Monolith",
+    era: "Mauryan Dynasty",
+    material: "Polished Sandstone",
+    image: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&q=80",
+    audioDuration: "2:50",
+    highlightBadge: "Imperial Symbol · Level 3",
+    quote: "Embodying royal authority and Dharma, carved out of a single continuous block of stone with legendary mirror polish.",
+    description: "Discovered during excavations near ancient Pataliputra, this capital reflects the diplomatic and spiritual influence of Emperor Ashoka. The four roaring lions symbolize sovereignty, while the wheel (Chakra) represents universal law.",
+    gallery: "Mauryan Empire Court",
+    floor: "Ground Floor, Central Atrium",
+    tags: ["Ashoka", "Monolith", "Royal Symbols", "Pataliputra"],
+  },
+  "pala-bronze-buddha": {
+    title: "Pala Sacred Bronze Buddha",
+    subtitle: "c. 9th Century CE • Lost-Wax Bronze Alloy",
+    era: "Pala Empire",
+    material: "Bronze with Inlaid Silver",
+    image: "https://images.unsplash.com/photo-1618844876615-5c1cbcf3452f?w=800&q=80",
+    audioDuration: "4:10",
+    highlightBadge: "Sacred Art · Level 2",
+    quote: "Representing Nalanda's golden age of metal casting, exported across Ancient Asia along monastic pilgrimage routes.",
+    description: "Cast using the intricate cire-perdue (lost wax) method at the monastic university of Nalanda. The fine silver inlay in the eyes and urna illuminates the serene meditative posture of the Buddha.",
+    gallery: "Buddhist Monastic Art Gallery",
+    floor: "Floor 2, West Wing",
+    tags: ["Nalanda", "Pala Dynasty", "Bronze Casting", "Buddhist Art"],
+  },
+  "terracotta-mother-goddess": {
+    title: "Terracotta Mother Goddess",
+    subtitle: "c. 2nd Century BCE • Hand-Molded Terracotta",
+    era: "Shunga Period",
+    material: "Fired Clay & Natural Pigments",
+    image: "https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=800&q=80",
+    audioDuration: "3:15",
+    highlightBadge: "Folk Traditions · Level 1",
+    quote: "Vibrant clay figurine celebrating fertility and village spiritual traditions along the Fertile Gangetic Plain.",
+    description: "Molded by ancient village artisans of Bihar, this figurine displays elaborate fan-shaped headgear and layered disc jewelry. It provides rare insight into non-courtly everyday religious practices of antiquity.",
+    gallery: "Terracotta & Folk Traditions",
+    floor: "Floor 1, North Corridor",
+    tags: ["Terracotta", "Mother Goddess", "Village Folk Craft", "Gangetic Plain"],
+  },
+  "bulandibagh-dancer": {
+    title: "Bulandibagh Dancing Girl",
+    subtitle: "c. 3rd Century BCE • Excavated Pataliputra Terracotta",
+    era: "Mauryan Period",
+    material: "Fired Gangetic Clay",
+    image: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=800&q=80",
+    audioDuration: "3:05",
+    highlightBadge: "Urban Fashion · Level 2",
+    quote: "Capturing the fluid movement and elaborate layered skirts of Pataliputra court dancers.",
+    description: "Unearthed at Bulandibagh near Patna, this remarkable figurine features a wide hoop skirt and hoop earrings. It offers invaluable historical evidence of performance arts in the ancient Mauryan capital.",
+    gallery: "Pataliputra Excavation Gallery",
+    floor: "Floor 1, East Wing",
+    tags: ["Pataliputra", "Terracotta", "Performing Arts", "Mauryan Era"],
+  },
+  "sher-shah-coins": {
+    title: "Rupiya of Sher Shah Suri",
+    subtitle: "c. 1540 CE • Standardized High-Purity Silver Coin",
+    era: "Sur Empire",
+    material: "Pure Silver (178 grains)",
+    image: "https://images.unsplash.com/photo-1618844876615-5c1cbcf3452f?w=800&q=80",
+    audioDuration: "2:40",
+    highlightBadge: "Numismatic Treasure · Level 3",
+    quote: "The historic silver coin that established the standard 'Rupee' currency system across South Asia.",
+    description: "Issued during the reign of Emperor Sher Shah Suri from Sasaram, Bihar, this heavy silver coin bears Arabic and Devanagari inscriptions. Its precise weight standard formed the foundation of modern South Asian coinage.",
+    gallery: "Coins & Currency Gallery",
+    floor: "Floor 2, Numismatic Pavilion",
+    tags: ["Sher Shah Suri", "Currency", "Silver Coin", "Medieval History"],
+  },
+  "patna-school-painting": {
+    title: "Patna Kalam Bazaar Painting",
+    subtitle: "c. 18th Century CE • Watercolors on Handmade Paper",
+    era: "Patna School of Painting",
+    material: "Natural Pigments on Mulberry Paper",
+    image: "https://images.unsplash.com/photo-1544928147-79a2dbc1f389?w=800&q=80",
+    audioDuration: "4:00",
+    highlightBadge: "Miniature Painting · Level 2",
+    quote: "Synthesizing Mughal precision with European realism to document everyday tradesmen and festive life of Patna.",
+    description: "Patna Kalam was a distinct style of Indian painting that flourished in Bihar during the 18th and 19th centuries. Painted directly with fine squirrel-hair brushes without preliminary pencil sketches, these artworks capture carpet weavers, blacksmiths, and Gangetic boatmen with vivid realism.",
+    gallery: "Regional Art & Miniatures",
+    floor: "Floor 2, South Wing",
+    tags: ["Patna Kalam", "Miniature Painting", "Mughal Synthesis", "Folk Trades"],
+  },
+};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -20,27 +139,60 @@ const itemVariants = {
   show: { y: 0, opacity: 1, transition: { type: "spring" as const, stiffness: 100, damping: 20 } }
 };
 
-export default function ArtifactPage() {
+export default function ArtifactPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const artifactId = resolvedParams?.id || "didarganj-yakshi";
+  const artifact = artifactDatabase[artifactId] || artifactDatabase["didarganj-yakshi"];
+
+  const [is3DMode, setIs3DMode] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const { playTrack, currentTrack, isPlaying } = useAudio();
+  const isPlayingAudio = isPlaying && currentTrack?.id === artifactId;
+
+  const handlePlayArtifactAudio = () => {
+    playTrack({
+      id: artifactId,
+      title: `${artifact.title} Audio Guide`,
+      subtitle: artifact.subtitle,
+      duration: artifact.audioDuration,
+      durationSeconds: 225,
+      href: `/artifact/${artifactId}`,
+      image: artifact.image,
+    });
+  };
+
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0.4]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-black pb-24">
-      {/* ── Immersive Hero Image (Parallax) ── */}
-      <div className="relative h-[55dvh] w-full overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-background text-foreground pb-24 transition-colors duration-300">
+      {/* ── Immersive Hero Image Header ── */}
+      <div className="relative h-[50dvh] w-full overflow-hidden border-b-2 border-border">
         <motion.div style={{ y, opacity }} className="absolute inset-0 w-full h-full">
           <Image
-            src="/sculpture-hero.png"
-            alt="Didarganj Yakshi"
+            src={artifact.image}
+            alt={artifact.title}
             fill
             className="object-cover object-[center_20%]"
             priority
           />
         </motion.div>
-        {/* Sleek gradient mask to blend perfectly into the black background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+
+        {/* Floating Controls */}
+        <div className="absolute top-20 left-6 right-6 flex items-center justify-between z-20">
+          <Link href="/home" className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-md border-2 border-border flex items-center justify-center text-foreground hover:scale-105 transition-transform">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+
+          <button
+            onClick={() => setIsLiked(!isLiked)}
+            className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-md border-2 border-border flex items-center justify-center text-foreground hover:scale-105 transition-transform"
+          >
+            <Heart className={`w-5 h-5 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
+          </button>
+        </div>
       </div>
 
       {/* ── Content Area ── */}
@@ -48,97 +200,118 @@ export default function ArtifactPage() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex flex-col px-6 -mt-20"
+        className="relative z-10 flex flex-col px-6 -mt-12"
       >
         {/* Title & Subtitle */}
         <motion.div variants={itemVariants} className="mb-6 flex flex-col items-start">
-          <h1 className="text-[2.5rem] font-extrabold tracking-tight text-white mb-2 leading-[1.1] drop-shadow-md">
-            Didarganj Yakshi
-          </h1>
-          <p className="text-[15px] font-semibold text-white/70 mb-4 tracking-wide">
-            c. 3rd Century BCE • Polished Chunar Sandstone
-          </p>
-
-          {/* De-cluttered Tags (Moved below subtitle) */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 bg-white/10 text-white/90 rounded-full backdrop-blur-md border border-white/10 shadow-sm">
-              Collection Highlight
-            </span>
-            <span className="flex items-center text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 bg-primary/10 text-primary rounded-full backdrop-blur-md border border-primary/20 shadow-sm">
-              <ShieldCheck className="w-3 h-3 mr-1" />
-              Level 2
-            </span>
+          <div className="badge-teal mb-3">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            {artifact.highlightBadge}
           </div>
+          <h1 className="font-[family-name:var(--font-eb-garamond)] font-normal text-5xl leading-[0.95] tracking-tight text-foreground mb-2">
+            {artifact.title}
+          </h1>
+          <p className="text-sm font-medium text-muted-foreground tracking-wide">
+            {artifact.subtitle}
+          </p>
         </motion.div>
 
-        {/* Action Buttons (Clear Hierarchy) */}
-        <motion.div variants={itemVariants} className="flex gap-3 mb-10 w-full">
-          <Button className="flex-[3] rounded-full bg-primary text-black font-extrabold h-14 shadow-[0_0_24px_rgba(220,194,124,0.3)] hover:scale-[1.02] transition-transform text-[15px]">
-            <Headphones className="w-4 h-4 mr-2" />
-            Listen (3:45)
+        {/* Action Buttons */}
+        <motion.div variants={itemVariants} className="flex gap-3 mb-8 w-full">
+          <Button 
+            onClick={handlePlayArtifactAudio}
+            className={cn(
+              "btn-primary flex-[3] h-14 rounded-xl text-base font-semibold border-2 border-border transition-colors",
+              isPlayingAudio ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground"
+            )}
+          >
+            {isPlayingAudio ? <Pause className="w-4 h-4 mr-2 fill-current" /> : <Headphones className="w-4 h-4 mr-2" />}
+            {isPlayingAudio ? "Pause Audio" : `Listen (${artifact.audioDuration})`}
           </Button>
-          <Button variant="outline" className="flex-[2] rounded-full bg-transparent border border-white/20 text-white/90 h-14 hover:bg-white/5 font-semibold text-[15px] transition-colors">
-            <Box className="w-4 h-4 mr-2 opacity-70" />
-            3D Model
+          <Button 
+            onClick={() => setIs3DMode(!is3DMode)}
+            className="btn-secondary flex-[2] h-14 rounded-xl text-base font-semibold border-2 border-border bg-card text-foreground"
+          >
+            <Box className="w-4 h-4 mr-2" />
+            {is3DMode ? "Photo" : "3D Model"}
           </Button>
         </motion.div>
 
-        {/* Narrative Description (Broken up text wall) */}
-        <motion.div variants={itemVariants} className="mb-10">
-          <h3 className="text-xl font-extrabold text-white tracking-tight mb-4">
-            The Masterpiece of Mauryan Polish
+        {/* 3D Model Render Frame */}
+        {is3DMode && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-8">
+            <Card className="bg-card border-2 border-border rounded-[32px] p-6 text-center shadow-none">
+              <div className="w-16 h-16 rounded-full bg-primary/20 border-2 border-border flex items-center justify-center mx-auto mb-3">
+                <Box className="w-8 h-8 text-foreground animate-bounce" />
+              </div>
+              <h3 className="font-[family-name:var(--font-eb-garamond)] text-2xl font-normal text-foreground">
+                3D Interactive Model Active
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 mb-4">
+                Drag with finger to rotate 360° and inspect surface details.
+              </p>
+              <div className="h-44 rounded-2xl bg-muted border-2 border-dashed border-border flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                [3D WebGL Canvas Render Engine]
+              </div>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Narrative Description */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <h3 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-foreground mb-3">
+            Historical Story & Significance
           </h3>
           
-          {/* Stylized Blockquote for scannability */}
-          <div className="relative pl-5 py-2 mb-5 border-l-2 border-primary/80 bg-gradient-to-r from-primary/10 to-transparent rounded-r-lg">
-            <Quote className="absolute top-2 left-2 w-10 h-10 text-primary/10 -z-10" />
-            <p className="text-[15px] italic text-white/90 font-medium leading-snug">
-              "Globally renowned for its glass-like polish, capturing the idealized female form in ancient Indian aesthetics."
+          <div className="relative pl-5 py-3 mb-5 border-l-4 border-secondary bg-muted/30 border-2 border-border rounded-r-2xl">
+            <Quote className="absolute top-2 left-2 w-8 h-8 text-secondary/20 -z-10" />
+            <p className="text-base italic text-foreground font-medium leading-relaxed">
+              &quot;{artifact.quote}&quot;
             </p>
           </div>
 
-          <p className="text-[16px] leading-loose text-white/70 font-medium">
-            Unearthed in 1917 on the banks of the Ganges, this life-size statue represents a <i>Chauri</i> (fly-whisk) bearer. Notice the intricate details of her jewelry, the heavy folds of her drapery, and the sheer perfection of the stone surface—an incredible technological feat achieved over two millennia ago.
+          <p className="text-base leading-relaxed text-foreground font-normal">
+            {artifact.description}
           </p>
         </motion.div>
 
-        {/* Location Card (Polished Glassmorphism) */}
-        <motion.div variants={itemVariants} className="mb-10">
-          <h3 className="text-lg font-bold text-white tracking-tight mb-3">
+        {/* Location Card */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <h3 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-foreground mb-3">
             Location in Museum
           </h3>
           <Link href="/map" className="block outline-none group">
-            <Card className="bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/10 transition-colors shadow-sm rounded-2xl overflow-hidden">
+            <Card className="bg-card border-2 border-border rounded-[28px] hover:bg-muted/40 transition-colors shadow-none overflow-hidden">
               <CardContent className="flex items-center p-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20 shrink-0 mr-4 shadow-inner">
-                  <MapPin className="w-5 h-5 text-primary" />
+                <div className="flex items-center justify-center w-11 h-11 rounded-full bg-primary border-2 border-border shrink-0 mr-4 text-primary-foreground">
+                  <MapPin className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[15px] font-bold text-white">
-                    Historical Art Gallery
+                  <p className="text-base font-semibold text-foreground">
+                    {artifact.gallery}
                   </p>
-                  <p className="text-[13px] font-medium text-white/60 mt-0.5">
-                    Floor 1, East Wing
+                  <p className="text-xs font-medium text-muted-foreground mt-0.5">
+                    {artifact.floor}
                   </p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors transform group-hover:translate-x-1" />
+                <ChevronRight className="w-5 h-5 text-foreground group-hover:translate-x-1 transition-transform" />
               </CardContent>
             </Card>
           </Link>
         </motion.div>
 
-        {/* Tags (Softened Interactive Filter Look) */}
+        {/* Themes & Tags */}
         <motion.div variants={itemVariants} className="mb-8">
-          <h3 className="text-lg font-bold text-white tracking-tight mb-4">
+          <h3 className="font-[family-name:var(--font-eb-garamond)] font-normal text-3xl text-foreground mb-3">
             Themes & Tags
           </h3>
-          <div className="flex flex-wrap gap-2.5">
-            {["Mauryan Empire", "Sculpture", "Feminine Divine", "Ancient Techniques"].map((tag) => (
+          <div className="flex flex-wrap gap-2">
+            {artifact.tags.map((tag) => (
               <span 
                 key={tag}
-                className="flex items-center px-4 py-2 text-[13px] font-semibold text-white/80 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full cursor-pointer transition-colors"
+                className="flex items-center px-4 py-2 text-xs font-medium text-foreground bg-card border-2 border-border rounded-full cursor-pointer hover:bg-primary transition-colors"
               >
-                <Tag className="w-3.5 h-3.5 mr-2 opacity-50" />
+                <Tag className="w-3.5 h-3.5 mr-1.5" />
                 {tag}
               </span>
             ))}
